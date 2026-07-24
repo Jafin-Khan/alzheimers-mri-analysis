@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neuro IN-SIGHT</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Favicon (browser tab icon) -->
+  <link rel="icon" type="image/png" href="NeuroInsightLogo2.png">
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="NeuroInsightLogo.png" alt="Neuro IN-SIGHT Logo">
+      </div>
+      <div>
+        <h1>Neuro IN-SIGHT</h1>
+        <p>Alzheimer's image classification framework</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="yellow-ribbon">
+    <h2>Medical Disclaimer</h2>
+    <p>This system is for demonstration purposes only. Results should not be used for medical diagnosis. Always consult with qualified healthcare practitioner for professional medical advice.</p>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <section>
+      <div class="card">
+        <h2>Analysis Model</h2>
+        <p class="sub">Pick the analysis model from the dropdown menu.</p>
+
+        <div class="dropdown-wrap">
+          <select id="model">
+            <option value="cnn">CNN (Convolutional Neural Network)</option>
+            <option value="logreg">Logistic Regression</option>
+          </select>
+        </div>
+
+        <div class="model-info">
+          <p class="model-row">
+            <span class="label">Description:</span>
+            <span id="modelDescription" class="model-value">—</span>
+          </p>
+          <p class="model-row">
+            <span class="label">Accuracy:</span>
+            <span id="accuracyText" class="model-value">94%</span>
+          </p>
+          <p class="model-row">
+            <span class="label">Recommended Thresholds:</span>
+            <span id="recommendedThresholds" class="model-value">0.5 (Normal), 0.2 (Early Detection), 0.7 (Lowest Risk)</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px;">
+        <h2>Upload Image</h2>
+        <p class="sub">Click to select an image, or drag & drop.</p>
+
+        <div id="dropZone" class="upload" role="button" tabindex="0" aria-label="Upload image">
+          <div class="big-icon">⤴</div>
+          <div class="upload-text">
+            <div style="font-weight:900;">Drop an image here</div>
+            <small>Supported: JPG, PNG, TIFF, BMP, WEBP</small>
+          </div>
+
+          <div class="upload-preview" id="uploadPreview">
+            <img id="previewImg" alt="Uploaded preview" />
+            <div class="meta">
+              <span id="fileName">—</span>
+              <span id="fileSize">—</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <button class="btn-primary" id="chooseBtn" type="button">Choose File</button>
+            <button class="btn-ghost" id="clearBtn" type="button">Clear</button>
+          </div>
+
+          <input class="hidden-input"
+                 id="fileInput"
+                 type="file"
+                 accept="image/*" />
+        </div>
+
+        <div class="controls-row">
+          <label class="toggle-switch">
+            <input type="checkbox" id="thresholdToggle" />
+            <span class="slider-switch"></span>
+          </label>
+          <span class="toggle-label">Threshold</span>
+
+          <div class="threshold-control" id="thresholdControl">
+            <input type="range" id="thresholdRange" min="0.1" max="0.9" step="0.1" value="0.5" />
+            <span id="thresholdValue">0.5</span>
+          </div>
+          <button class="btn-primary" id="runBtn" type="button">Run Analysis</button>
+        </div>
+        <div class="threshold-description" id="thresholdDescription">Higher thresholds make the model more conservative and reduce false positives. Lower thresholds increase sensitivity and catch more possible abnormalities.</div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section>
+      <div class="card">
+        <h2>Analysis Results</h2>
+        <p class="sub">Results will appear here after analysis.</p>
+
+        <div class="results-placeholder" id="resultsPlaceholder">
+          <div>
+            <div style="font-size: 28px;">📊</div>
+            <div style="font-weight:900; margin-top: 6px;">Awaiting results…</div>
+            <div style="font-size: 12px; margin-top: 4px;">Upload an image, then click "Run Analysis".</div>
+          </div>
+        </div>
+
+        <div class="result-card" id="resultsCard">
+          <div class="result-title">
+            <div style="font-weight:900;">Result</div>
+            <span class="badge" id="modelBadge">Model: —</span>
+          </div>
+
+          <div class="result-summary">
+            <div style="font-weight:900; font-size: 18px;" id="predictionText">—</div>
+            <div class="result-note" id="resultNote">—</div>
+          </div>
+
+          <div class="probability-panel" id="probabilityPanel">
+            <div class="probability-label">Probability</div>
+            <div class="progress">
+              <div class="bar" id="probabilityBar" style="width:0%"></div>
+            </div>
+            <div class="probability-value" id="probabilityValue">—</div>
+          </div>
+
+          <div class="threshold-panel" id="thresholdPanel">
+            <div class="threshold-title">Threshold sweep</div>
+            <div class="threshold-chart" id="thresholdChart">
+              <div class="threshold-plot" id="thresholdPlot"></div>
+              <div class="threshold-axis">
+                <div class="axis-line"></div>
+                <div class="axis-labels" id="thresholdAxisLabels"></div>
+                <div class="axis-name">Threshold</div>
+              </div>
+            </div>
+            <div class="threshold-legend">
+              <span>M = Malignant</span>
+              <span>B = Benign</span>
+            </div>
+          </div>
+
+          <div class="footer-line">
+            <span id="timeStamp">—</span>
+            <span id="footerNote">Backend response</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
